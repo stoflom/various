@@ -1,0 +1,9 @@
+.sync.ffs_db
+.sync.ffs_lock
+.sync.ffs_store
+*.swp
+*~
+.DS_Store
+.idea/
+.vscode/
+.sync/      

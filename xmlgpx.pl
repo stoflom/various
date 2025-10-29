@@ -2,8 +2,6 @@
 #use strict;
 use warnings;
 
-
-
 use XML::LibXML;
 use XML::LibXML::XPathContext;
 
@@ -18,11 +16,7 @@ my $xpc = XML::LibXML::XPathContext->new($doc);
 $xpc->registerNs('tx', "http://www.topografix.com/GPX/1/0");
 
 
-# Find nodes using the registered namespaces
-#my ($tx_time) = $xpc->findnodes('//tx:time');
-
-
-
+# Find nodes using XPath
 my ($tx_trk_name) = $xpc->findnodes('//tx:trk/tx:name');
 
 foreach my $node ($xpc->findnodes('//tx:trk/tx:name')) {
