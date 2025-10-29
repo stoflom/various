@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Script to test files in current directory using a perl script (xmlgpx.pl which checks for <trk> elements in a GPX file).
+#If the perl script returns an empty output for a file, that file is deleted.
+
 # Define the directory to test files in
 # You should change this to your actual directory path
 TARGET_DIR="."

@@ -1,5 +1,8 @@
 #!/usr/bin/perl
-#use strict;
+# Reads a GPX XML file and extract <trk><name> elements using XML::LibXML with XPath and namespaces.
+# If the file contains <trk> elements the <name> of each track is printed else nothing is printed.
+
+# use strict;
 use warnings;
 
 use XML::LibXML;

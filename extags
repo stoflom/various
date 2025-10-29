@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Function to extract tags using exiftool and jq
+# Function to extract tags in json format from image files using exiftool and jq
 gettags ()
 {
     # $1 holds the filename passed to the function
