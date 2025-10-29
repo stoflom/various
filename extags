@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Function to extract tags using exiftool and jq
+gettags ()
+{
+    # $1 holds the filename passed to the function
+    # The output is a JSON array with one object, so we use .[0]
+    # We pipe the output of exiftool to jq to extract 'Subject' and 'HierarchicalSubject'
+    exiftool -json "$1" | jq -r '.[0].Subject , .[0].HierarchicalSubject '
+}
+
+# ---
+
+# Main script execution
+# This loop iterates through all arguments passed to the script ($@)
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 file1 [file2 file3 ...]"
+    exit 1
+fi
+
+for input_file in "$@"; do
+    if [ -f "$input_file" ]; then
+        echo "--- Processing: $input_file ---"
+        # Call the function for the current file
+        gettags "$input_file"
+        echo
+    else
+        echo "Error: File not found or is not a regular file: $input_file" >&2
+    fi
+done
