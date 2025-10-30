@@ -19,7 +19,7 @@ DIR_B="$2"
 
 # --- Configuration ---
 # Set to 0 for a dry run (no files will be deleted), set to 1 to enable actual deletion.
-DO_RM=0 
+DO_RM=0
 
 
 # Define the name of the Perl script used for content extraction.
