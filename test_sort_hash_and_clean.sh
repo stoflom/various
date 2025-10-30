@@ -17,6 +17,11 @@ fi
 DIR_A="$1"
 DIR_B="$2"
 
+# --- Configuration ---
+# Set to 0 for a dry run (no files will be deleted), set to 1 to enable actual deletion.
+DO_RM=0 
+
+
 # Define the name of the Perl script used for content extraction.
 # This script is expected to be in the system's PATH or in the current directory.
 PERL_SCRIPT="xmlgpx.pl"
@@ -84,7 +89,7 @@ echo "Pre-calculating hashes for files in reference directory (A)..."
 while IFS= read -r -d $'\0' file_a; do
     hash_a=$(calculate_content_hash "$file_a")
     if [ -n "$hash_a" ]; then
-        hashes_a["$hash_a"]=1  # Store the hash as a key in the associative array.
+        hashes_a["$hash_a"]=1  # Store the hash as a key in the associative array with content "1".
     else
         echo "Warning: Could not generate hash for $file_a. Skipping."
     fi
@@ -105,13 +110,17 @@ find "$DIR_B" -type f -print0 | while IFS= read -r -d $'\0' file_b; do
 
     # Step 3: Check if the calculated hash_b exists as a key in the hashes_a array.
     # If it does, it means a file with identical processed content exists in Directory A.
-    # In this case, delete the file in Directory B.
+    # In this case, delete the file in Directory B (if variable DO_RM, defined above, is set to 1).
      if [[ -v hashes_a["$hash_b"] ]]; then
         echo "Match found for: $file_b (Hash: $hash_b)"
-        if rm "$file_b"; then
-            echo "-> DELETED $file_b"
+        if [ "$DO_RM" -eq 1 ]; then
+            if rm "$file_b"; then
+                echo "-> DELETED $file_b"
+            else
+                echo "-> Error deleting $file_b"
+            fi
         else
-            echo "-> Error deleting $file_b"
+            echo "-> DRY RUN: Would have deleted $file_b (set DO_RM=1 to enable deletion)"
         fi
     fi
 
