@@ -20,28 +20,23 @@ if ($@) {
     die "Error: Failed to parse XML file '$filename'.\n$@";
 }
 
-# Create an XPathContext object
-my $xpc = XML::LibXML::XPathContext->new($doc);
-
-# Find the topografix namespace to be version-insensitive
-my ($gpx_namespace) = grep { $_->getValue =~ /topografix\.com/ } $doc->documentElement->getNamespaces;
-#print "Namespace: " . ($gpx_namespace ? $gpx_namespace->getValue : "None") . "\n";
-
-# Define the XPath query
-my $xpath_query;
+my $context = $doc;
+my $xpath;
 
 # Find nodes using XPath
-if ($gpx_namespace) {
-    my $namespace_uri = $gpx_namespace->getValue;
-    # Register the found namespace with a prefix 'tx'
-    $xpc->registerNs('tx', $namespace_uri);
-    $xpath_query = '//tx:trk/tx:name';
+my $default_ns = $doc->documentElement->namespaceURI();
+
+if ($default_ns) {
+    my $xpc = XML::LibXML::XPathContext->new($doc);
+    $xpc->registerNs('gpx', $default_ns);
+    $xpath = '//gpx:trk/gpx:name';
+    $context = $xpc;
 } else {
     # Fallback for files with no namespace
-    $xpath_query = '//trk/name';
+    $xpath = '//trk/name';
 }
 
-my @nodes = eval { $xpc->findnodes($xpath_query) };
+my @nodes = eval { $context->findnodes($xpath) };
 if ($@) {
     print STDERR "Error during XPath query on '$filename': $@";
 } else {
