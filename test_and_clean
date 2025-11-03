@@ -47,7 +47,7 @@ find "$TARGET_DIR" -type f -print0 | while IFS= read -r -d '' filepath; do
         
         # Uncomment the 'rm' line below to enable actual deletion!
         # For a safe test, leave it commented out and run the script first.
-        rm "$filepath"
+ #       rm "$filepath"
         
         # ---
         # NOTE: For safety, the 'rm' command is commented out. 
