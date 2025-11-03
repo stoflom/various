@@ -11,6 +11,11 @@ TARGET_DIR="."
 # Assuming it's in the current directory or in your PATH
 PERL_SCRIPT="xmlgpx.pl"
 
+# --- Configuration ---
+# Set to 0 for a dry run (no files will be deleted), set to 1 to enable actual deletion.
+DO_RM=0
+
+
 # --- Error Handling and Setup ---
 
 # Check if the directory exists
@@ -44,16 +49,16 @@ find "$TARGET_DIR" -type f -print0 | while IFS= read -r -d '' filepath; do
     # -z is the test for a zero-length string (empty)
     if [ -z "$output" ]; then
         echo "--> Output is empty. Deleting file: $filepath"
-        
-        # Uncomment the 'rm' line below to enable actual deletion!
-        # For a safe test, leave it commented out and run the script first.
- #       rm "$filepath"
-        
-        # ---
-        # NOTE: For safety, the 'rm' command is commented out. 
-        # Uncomment the line above *after* you have confirmed the script 
-        # correctly identifies the files you want to delete.
-        # ---
+    
+        if [ "$DO_RM" -eq 1 ]; then
+            if rm "$filepath"; then
+                echo "-> DELETED $filepath"
+            else
+                echo "-> Error deleting $filepath"
+            fi
+        else
+            echo "-> DRY RUN: Would have deleted $filepath (set DO_RM=1 to enable deletion)"
+        fi
 
     else
         echo "--> Output is NOT empty. Keeping file."
