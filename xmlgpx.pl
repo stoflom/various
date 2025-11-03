@@ -23,12 +23,25 @@ if ($@) {
 # Create an XPathContext object
 my $xpc = XML::LibXML::XPathContext->new($doc);
 
-# Register namespaces
-$xpc->registerNs('tx', "http://www.topografix.com/GPX/1/0");
+# Find the topografix namespace to be version-insensitive
+my ($gpx_namespace) = grep { $_->getValue =~ /topografix\.com/ } $doc->documentElement->getNamespaces;
+#print "Namespace: " . ($gpx_namespace ? $gpx_namespace->getValue : "None") . "\n";
 
+# Define the XPath query
+my $xpath_query;
 
 # Find nodes using XPath
-my @nodes = eval { $xpc->findnodes('//tx:trk/tx:name') };
+if ($gpx_namespace) {
+    my $namespace_uri = $gpx_namespace->getValue;
+    # Register the found namespace with a prefix 'tx'
+    $xpc->registerNs('tx', $namespace_uri);
+    $xpath_query = '//tx:trk/tx:name';
+} else {
+    # Fallback for files with no namespace
+    $xpath_query = '//trk/name';
+}
+
+my @nodes = eval { $xpc->findnodes($xpath_query) };
 if ($@) {
     print STDERR "Error during XPath query on '$filename': $@";
 } else {
