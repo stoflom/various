@@ -17,9 +17,10 @@ extags \
 gdb-to-gpx \
 gpsinfo \
 gpstags \
-test_and_clean \
-test_sort_hash_and_clean \
+#test_and_clean \
+#test_sort_hash_and_clean \
 xmlgpx.pl
+
 
 # --- Targets ---
 
