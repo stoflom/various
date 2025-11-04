@@ -34,7 +34,7 @@ This project uses a `Makefile` for easy installation and uninstallation of the s
 -   `ffile-copy`: A powerful wrapper for `find` and `cp` to collect files into a single directory, handling name collisions.
 -   `compare_and_delete`: Finds and deletes files in a target directory that are content-duplicates of files in a reference directory.
 -   `cp-safe`: A safe copy utility that renames the destination file with a numeric suffix if it already exists.
-`gpsinfo, gpstags, gdb-to-gpx`: Utilities to manipulate gps info in images and to convert Garmin gdb files to gpx with gpsbabel.
-`test_and_clean, test_sort_hash_and_clean, xmlgpx.pl`: Utilities to find and remove gpx files with no tracks.
+-   `gpsinfo, gpstags, gdb-to-gpx`: Utilities to manipulate gps info in images and to convert Garmin gdb files to gpx with gpsbabel.
+-   `test_and_clean, test_sort_hash_and_clean, xmlgpx.pl`: Utilities to find and remove gpx files with no tracks.
 
 
