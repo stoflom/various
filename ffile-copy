@@ -27,10 +27,10 @@ Options:
 [find_args...] are any valid arguments for the 'find' command,
 	such as: -L /path/to/search -ls -print -name '*.txt'
 	(The '-L' causes symbolic links to be followed,
-	 '-ls -print' prints output in 'ls -dils' format,
+	 '-ls -print' prints all files examined in 'ls -dils' format,
 	 '-name '*.txt' ' searches for filenames matching *.txt.
 	 See 'man find' for other search options.)
-e.g #>ffile-copy /dest/dir -L /source/path -ls -print -name '*.txt'
+e.g #>ffile-copy /dest/dir -L /source/path -name '*.txt'
 USAGE
     exit 1
 }
