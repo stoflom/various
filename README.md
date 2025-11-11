@@ -38,3 +38,37 @@ This project uses a `Makefile` for easy installation and uninstallation of the s
 -   `test_and_clean, test_sort_hash_and_clean, xmlgpx.pl`: Utilities to find and remove gpx files with no tracks.
 
 
+
+### btrfs_backup.sh script to take btrfs snapshots of / and /home and to send them to a backup disk (incrementally)
+
+## ⚙️ Initial Setup and Execution
+
+### 1\. Create Snapshot Directories
+
+Ensure the subvolumes where snapshots will live actually exist. If they don't, you need to create them as Btrfs subvolumes first:
+
+```bash
+# Assuming /snapshots is already mounted/existing. If not, create it:
+# btrfs subvolume create /snapshots 
+# btrfs subvolume create /home/snapshots 
+```
+
+### 2\. Set Up Initial History File
+
+For the script to work immediately, you need to initialize the history file with the provided full snapshot paths. This tells the script which snapshots were your initial **full** backups.
+
+Create the file `/root/.btrfs_last_snapshot` with the contents of existing snapshots if they exist, if not the ecript will create it for you:
+
+```
+root:/snapshots/root_20251111102847
+home:/home/snapshots/home_20251111103030
+```
+
+### 3\. Run the Script
+
+Execute the script as root:
+
+```bash
+sudo ./btrfs_backup.sh
+```
+
