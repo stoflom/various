@@ -1,35 +1,31 @@
 #!/bin/bash
 #
 # Btrfs Backup Function Library
-#
-# This script contains the backup_subvolume function used for creating
-# Btrfs snapshots and sending them to a backup destination. It is intended
-# to be sourced by a main execution script.
+# This file contains the backup_subvolume function and is intended to be
+# sourced by a main script.
 
-# Performs a Btrfs snapshot and an incremental send/receive operation.
+# backup_subvolume()
+# Creates a local Btrfs snapshot and sends it to a backup destination.
+# It can perform a full or an incremental backup.
+# Logs success or failure to syslog via the `logger` command.
 #
-# @param $1 - SOURCE_SUBVOL: The source subvolume to back up (e.g., "/").
-# @param $2 - SNAP_DIR: The directory where the snapshot will be created.
-# @param $3 - BACKUP_DEST: The destination subvolume for the backup.
-# @param $4 - HISTORY_FILE: The path to the file tracking the last successful backup.
-# @param $5 - SNAP_TYPE: A unique identifier for the backup type (e.g., "root", "home").
+# On success, it returns exit code 0.
+# On failure, it returns a non-zero exit code, leaving the created snapshot in place.
+#
+# @param $1 SOURCE_SUBVOL   The source subvolume to back up (e.g., "/home").
+# @param $2 BACKUP_DEST     The destination path for the btrfs receive operation.
+# @param $3 NEW_SNAP_PATH   The full, absolute path for the new snapshot to be created.
+# @param $4 LAST_SNAP_PATH  (Optional) Full path to the parent snapshot for an incremental backup.
 backup_subvolume() {
 	local SOURCE_SUBVOL=$1
-	local SNAP_DIR=$2
-	local BACKUP_DEST=$3
-	local HISTORY_FILE=$4
-	local SNAP_TYPE=$5
+	local BACKUP_DEST=$2
+	local NEW_SNAP_PATH=$3
+	local LAST_SNAP_PATH=$4
+	local NEW_SNAP_NAME=$(basename "$NEW_SNAP_PATH")
 
 	echo "--- Starting Btrfs Backup for $SOURCE_SUBVOL ---"
 
-	# 1. Generate new snapshot name
-	local NEW_SNAP_NAME="${SNAP_TYPE}_$(date +%Y%m%d%H%M%S)"
-	NEW_SNAP_PATH="${SNAP_DIR}/${NEW_SNAP_NAME}"
-
-	# 2. Get the last successfully sent snapshot path from history
-	LAST_SNAP_PATH=$(grep "^${SNAP_TYPE}:" "$HISTORY_FILE" | cut -d ':' -f 2)
-
-	# 3. Create the read-only snapshot
+	# 1. Create the read-only snapshot
 	echo "Creating read-only snapshot: ${NEW_SNAP_PATH}"
 	btrfs subvolume snapshot -r "$SOURCE_SUBVOL" "$NEW_SNAP_PATH"
 	if [ $? -ne 0 ]; then
@@ -37,7 +33,7 @@ backup_subvolume() {
 		return 1
 	fi
 
-	# 4. Perform btrfs send/receive
+	# 2. Perform btrfs send/receive
 	if [ -n "$LAST_SNAP_PATH" ] && [ -d "$LAST_SNAP_PATH" ]; then
 		# Incremental backup (if parent exists)
 		echo "Performing INCREMENTAL send/receive."
@@ -50,24 +46,15 @@ backup_subvolume() {
 	fi
 
 	if [ $? -eq 0 ]; then
-		echo "SUCCESS: Backup completed for $SOURCE_SUBVOL. Updating history file."
-
-		# 5. Update the history file atomically
-		TEMP_HISTORY="/tmp/btrfs_history_temp_$$"
-		# Copy existing lines, but exclude the one we're updating
-		grep -v "^${SNAP_TYPE}:" "$HISTORY_FILE" >"$TEMP_HISTORY"
-		# Append the new successful snapshot path
-		echo "${SNAP_TYPE}:${NEW_SNAP_PATH}" >>"$TEMP_HISTORY"
-		# Atomically replace the old file with the new one
-		mv "$TEMP_HISTORY" "$HISTORY_FILE"
-
-		echo "History updated to: ${NEW_SNAP_PATH}"
+		logger -t btrfs_backup_script -p local0.info "Snapshot ${NEW_SNAP_NAME} for ${SOURCE_SUBVOL} -> ${BACKUP_DEST} COMPLETED"
+		# Return success
+		return 0
 	else
 		echo "ERROR: Btrfs send/receive failed for $SOURCE_SUBVOL. History NOT updated."
-		# If send/receive fails, delete the local snapshot to avoid clutter
-		echo "Cleaning up local snapshot: ${NEW_SNAP_PATH}"
-		btrfs subvolume delete "$NEW_SNAP_PATH"
-		return 1
+		logger -t btrfs_backup_script -p local0.error "Snapshot ${NEW_SNAP_NAME} for ${SOURCE_SUBVOL} -> ${BACKUP_DEST} FAILED"
+		# The local snapshot is intentionally kept for potential manual intervention or retry.
+		echo "WARNING: Failed to send snapshot, but keeping local snapshot: ${NEW_SNAP_PATH}"
+		return 1 # Indicate failure
 	fi
 
 	echo "--- Finished Btrfs Backup for $SOURCE_SUBVOL ---"
