@@ -88,6 +88,8 @@ A script to take Btrfs snapshots of the `/` and `/home` subvolumes and send them
 
 3.  **Run the Script**
 
+    BE VERY CAREFULL! Script still being tested, it should not delete/corrupt anything but VERIFY snapshots have been copied to backup media.
+    
     Execute the script with root privileges:
 
     ```bash

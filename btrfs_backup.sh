@@ -8,6 +8,8 @@
 # Creates a local Btrfs snapshot and sends it to a backup destination.
 # It can perform a full or an incremental backup.
 # Logs success or failure to syslog via the `logger` command.
+# The log can be read using "journalctl -t btrfs_backup_script"
+# The local snapshot is retained even if the send/receive fails.
 #
 # On success, it returns exit code 0.
 # On failure, it returns a non-zero exit code, leaving the created snapshot in place.
@@ -23,10 +25,18 @@ backup_subvolume() {
 	local LAST_SNAP_PATH=$4
 	local NEW_SNAP_NAME=$(basename "$NEW_SNAP_PATH")
 
+##DEBUG
+#   echo "SOURCE_SUBVOL: $SOURCE_SUBVOL"
+#   echo "BACKUP_DEST: $BACKUP_DEST"
+#	echo "NEW_SNAP_PATH: $NEW_SNAP_PATH"
+#	echo "LAST_SNAP_PATH: $LAST_SNAP_PATH"	
+#	echo "NEW_SNAP_NAME: $NEW_SNAP_NAME"
+
+
 	echo "--- Starting Btrfs Backup for $SOURCE_SUBVOL ---"
 
 	# 1. Create the read-only snapshot
-	echo "Creating read-only snapshot: ${NEW_SNAP_PATH}"
+
 	btrfs subvolume snapshot -r "$SOURCE_SUBVOL" "$NEW_SNAP_PATH"
 	if [ $? -ne 0 ]; then
 		echo "ERROR: Failed to create snapshot for $SOURCE_SUBVOL."
