@@ -113,17 +113,17 @@ Main orchestration script for Btrfs Incremental Backups.
 Must be run as root.
 
 Arguments:
-  -s: Enables a re-send and verification mode for the latest local snapshots.
+  -s|--send: Enables a re-send and verification mode for the latest local snapshots.
       When this flag is provided, the script does NOT create new snapshots.
       Instead, for each subvolume, it finds the latest local snapshot and checks
       if it exists and is complete on the backup destination. If the snapshot
       is missing or found to be incomplete, it will be (re-)sent. This is
       useful for retrying failed or interrupted transfers.
-  -h, --help: Display this help message and exit.
+  -h|--help: Display this help message and exit.
 EOF
 }
 
-echo "--- btrfs_backup_main script execution Started: $(date) ---"
+
 
 # --- Argument Parsing ---
 while getopts ":sh-:" opt; do
@@ -136,13 +136,24 @@ while getopts ":sh-:" opt; do
       usage
       exit 0
       ;;
-    -)
-      [ "${OPTARG}" = "help" ] && { usage; exit 0; }
-      echo "Invalid option: --${OPTARG}" >&2
-      usage >&2
-      exit 1
-      ;;
-    \? )
+    -) # Handle long options
+      case "$OPTARG" in
+	  help)
+        usage
+        exit 0
+		;;
+      send)
+		SEND_RECEIVE=true
+		echo "Re-send/Receive mode enabled."
+		;;
+	  *)					
+      	echo "Invalid option: --$OPTARG" >&2
+		usage >&2
+      	exit 2
+      	;;
+	  esac
+	  ;;
+    \?)	# This case handles any short option not in the getopts string (e.g., -k, -x)
       echo "Invalid option: -$OPTARG" >&2
       usage >&2
       exit 1
@@ -151,6 +162,8 @@ while getopts ":sh-:" opt; do
 done
 
 # --- Main Execution ---
+
+echo "--- btrfs_backup_main script execution Started: $(date) ---"
 
 # Check if the backup destination is mounted and exists
 if [ ! -d "$BACKUP_DEST" ]; then
