@@ -6,15 +6,15 @@
 # Must be run as root.
 #
 # Usage:
-#   ./btrfs_backup_main.sh [-s] [-h|--help]
+#   ./btrfs_backup_main.sh [-s|send] [-h|--help]
 #
 # Arguments:
-#   -s: Enables a re-send and verification mode for the latest local snapshots.
+#   -s|send: Enables a re-send and verification mode for the latest local snapshots.
 #       When this flag is provided, the script does NOT create new snapshots.
 #       Instead, for each subvolume, it finds the latest local snapshot and checks
 #       if it exists and is complete on the backup destination. If the snapshot
 #       is missing or incomplete, it will be (re-)sent.
-#   -h, --help: Display the help message and exit.
+#   -h|--help: Display the help message and exit.
 
 # Exit on error, treat unset variables as errors, and propagate exit status in pipelines.
 set -euo pipefail
@@ -107,7 +107,7 @@ send_snapshot() {
 # --- Usage function ---
 usage() {
     cat <<EOF
-Usage: $(basename "$0") [-s] [-h|--help]
+Usage: $(basename "$0") [-s|send] [-h|--help]
 
 Main orchestration script for Btrfs Incremental Backups.
 Must be run as root.
@@ -138,21 +138,21 @@ while getopts ":sh-:" opt; do
       ;;
     -) # Handle long options
       case "$OPTARG" in
-	  help)
+	help)
         usage
         exit 0
-		;;
+	;;
       send)
-		SEND_RECEIVE=true
-		echo "Re-send/Receive mode enabled."
-		;;
-	  *)					
+	SEND_RECEIVE=true
+	echo "Re-send/Receive mode enabled."
+	;;
+      *)
       	echo "Invalid option: --$OPTARG" >&2
-		usage >&2
+	usage >&2
       	exit 2
       	;;
-	  esac
-	  ;;
+      esac
+      ;;
     \?)	# This case handles any short option not in the getopts string (e.g., -k, -x)
       echo "Invalid option: -$OPTARG" >&2
       usage >&2
