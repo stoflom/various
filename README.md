@@ -9,7 +9,6 @@ A collection of miscellaneous shell scripts for file management, system tasks, a
 - [Scripts](#scripts)
   - [File Management](#file-management)
   - [GPS & GPX Utilities](#gps--gpx-utilities)
-  - [System & Backup](#system--backup)
 
 ## Installation
 
@@ -57,41 +56,4 @@ A suite of tools for managing GPS data in image files and for cleaning and conve
     - `test_and_clean.sh` uses `xmlgpx.pl` to check for GPX files that contain no tracks.
     - `test_sort_hash_and_clean.sh` identifies duplicate tracks by sorting and hashing their content.
 
-### System & Backup
-
-#### `btrfs_backup.sh`
-
-A script to take Btrfs snapshots of the `/` and `/home` subvolumes and send them incrementally to a backup disk.
-
-##### ⚙️ Initial Setup and Execution
-
-1.  **Create Snapshot Directories**
-
-    Ensure the Btrfs subvolumes where snapshots will be stored exist. If not, create them first.
-
-    ```bash
-    # Example: Assuming /snapshots is a mounted Btrfs volume
-    sudo btrfs subvolume create /snapshots
-    sudo btrfs subvolume create /home/snapshots
-    ```
-
-2.  **Set Up Initial History File (Optional)**
-
-    For the script's incremental backup feature to work from the first run, you can initialize a history file with the paths to your initial **full** snapshots. If this file does not exist, the script will create it on its first run.
-
-    Create the file `/root/.btrfs_last_snapshot` with the following format:
-
-    ```ini
-    root:/snapshots/root_20251111102847
-    home:/home/snapshots/home_20251111103030
-    ```
-
-3.  **Run the Script**
-
-    BE VERY CAREFULL! Script still being tested, it should not delete/corrupt anything but VERIFY snapshots have been copied to backup media.
-    
-    Execute the script with root privileges:
-
-    ```bash
-    sudo ./btrfs_backup.sh
-    ```
+#
