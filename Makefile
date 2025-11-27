@@ -18,9 +18,9 @@ gdb-to-gpx \
 gpsinfo \
 gpstags \
 ffile-copy \
-btrfs_backup.sh \
-btrfs_backup_main.sh \
 combine_img_tags.sh	 \
+#btrfs_backup.sh \
+#btrfs_backup_main.sh \
 #test_and_clean \
 #test_sort_hash_and_clean \
 #xmlgpx.pl \
