@@ -50,17 +50,17 @@ To change this, edit the `IMAGE_EXTENSIONS` array in the script.
 
 2. Test with dry-run first (recommended):
     ```bash
-    ./combine_img_tags.sh --dryrun
+    ./combine_img_tags.sh /path/to/your/images --dryrun
     ```
 
-3. Run from the directory you want to process (or edit `SEARCH_DIR` in the script):
+3. Run from the directory you want to process (will use current directory by default):
     ```bash
     ./combine_img_tags.sh
     ```
 
-4. To delete Lightroom sidecars after successful merge:
+4. Specify a directory and enable cleanup (arguments can be in any order):
     ```bash
-    ./combine_img_tags.sh --cleanup
+    ./combine_img_tags.sh --cleanup /path/to/your/images
     ```
 
 ## Recommendations

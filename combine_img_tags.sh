@@ -1,32 +1,47 @@
 #!/bin/bash
 
 # --- Configuration ---
-SEARCH_DIR="."
 # Case-insensitive list of extensions to find
 IMAGE_EXTENSIONS=("PEF" "JPEG" "JPG" "DNG" "TIF" "TIFF" "GIF" "PNG" "BMP")
 # --- End Configuration ---
 
-# Parse arguments
+SEARCH_DIR="."
 DRYRUN=0
 CLEANUP=0
 
 usage() {
     cat <<EOF
-Usage: $(basename "$0") [--dryrun] [--cleanup] [--help]
+Usage: $(basename "$0") [SEARCH_DIR] [--dryrun] [--cleanup] [--help]
 
---dryrun|-d    Print the exiftool commands and actions without executing them.
---cleanup|-c   Delete Lightroom sidecar (name.xmp) after successful merge. Default: do NOT delete.
---help |-h     Show this help and exit.
+Arguments:
+  SEARCH_DIR     Directory to search for images. Defaults to the current directory (".").
+  --dryrun, -d   Print the exiftool commands and actions without executing them.
+  --cleanup, -c  Delete Lightroom sidecar (name.xmp) after successful merge. Default: do NOT delete.
+  --help, -h     Show this help and exit.
 EOF
     exit 0
 }
 
+# Parse arguments
 while [ $# -gt 0 ]; do
     case "$1" in
         --dryrun|-d) DRYRUN=1; shift ;;
         --cleanup|-c) CLEANUP=1; shift ;;
         --help|-h) usage ;;
-        *) echo "Unknown argument: $1"; usage ;;
+        -*)
+            echo "Unknown option: $1"
+            usage
+            ;;
+        *)
+            # Assume the first non-option argument is the search directory
+            if [ -z "${SEARCH_DIR_SET:-}" ]; then
+                SEARCH_DIR=$1
+                SEARCH_DIR_SET=1
+                shift
+            else
+                echo "Error: Only one search directory can be specified."
+                usage
+            fi
     esac
 done
 
