@@ -9,6 +9,8 @@ A collection of miscellaneous shell scripts for file management, system tasks, a
 - [Scripts](#scripts)
   - [File Management](#file-management)
   - [GPS & GPX Utilities](#gps--gpx-utilities)
+  - [EXIF Data Utilities](#exif-data-utilities)
+- [Dependencies](#dependencies)
 
 ## Installation
 
@@ -56,4 +58,18 @@ A suite of tools for managing GPS data in image files and for cleaning and conve
     - `test_and_clean.sh` uses `xmlgpx.pl` to check for GPX files that contain no tracks.
     - `test_sort_hash_and_clean.sh` identifies duplicate tracks by sorting and hashing their content.
 
-#
+### EXIF Data Utilities
+
+Tools to manage EXIF data in images.
+
+*   **`combine_img_tags.sh`**: Merge metadata into a single Darktable-style XMP sidecar file for each image using `exiftool`.
+
+---
+
+## Dependencies
+
+Some scripts require external command-line tools to be installed:
+
+*   **`gdb-to-gpx`**: Requires `gpsbabel`.
+*   **`combine_img_tags.sh`**: Requires `exiftool`.
+*   **`test_and_clean.sh`**: Requires `xmlgpx.pl` (included in this repository).
