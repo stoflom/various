@@ -2,7 +2,7 @@
 
 A collection of miscellaneous shell scripts for file management, system tasks, and command-line automation.
 
-----
+---
 ## Table of Contents
 
 - [Installation](#installation)
@@ -62,6 +62,8 @@ Tools to manage EXIF data in images.
 
 *   **`combine_img_tags.sh`**: Merge metadata into a single Darktable-style XMP sidecar file for each image using `exiftool`.
 
+*   **`extags`**: Extract tags from image files using `exiftool` and `jq`.
+
 ---
 
 ## Dependencies
@@ -70,4 +72,5 @@ Some scripts require external command-line tools to be installed:
 
 *   **`gdb-to-gpx`**: Requires `gpsbabel`.
 *   **`combine_img_tags.sh`**: Requires `exiftool`.
-*   **`test_and_clean.sh`**: Requires `xmlgpx.pl` (included in this repository).
+*   **`extags`**: Requires `exiftool` and `jq`.
+*   **`test_sort_hash_and_clean`**: Requires `rhash`.
