@@ -44,6 +44,7 @@ This project uses a `Makefile` for easy installation and uninstallation of the s
 
 *   **`compare_and_delete`**: Finds and deletes files in a target directory that are content-duplicates of files in a separate reference directory. Useful for cleaning up redundant copies.
 
+
 ### GPS & GPX Utilities
 
 A suite of tools for managing GPS data in image files and for cleaning and converting GPX track files. For a detailed description of the GPX file cleanup workflow, see README-gpx.md.
